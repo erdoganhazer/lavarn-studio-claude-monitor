@@ -1,10 +1,10 @@
 {
-  "updated": "30 Temmuz 2026, 23:55",
+  "updated": "31 Temmuz 2026, 00:44",
   "agents": {
     "gm": {
-      "status": "boşta",
-      "currentTask": null,
-      "since": null
+      "status": "çalışıyor",
+      "currentTask": "Metronom uygulaması pazar araştırması — fırsat analizi ve rapor",
+      "since": "31 Temmuz 2026, 00:10"
     },
     "yz-lider": {
       "status": "boşta",
@@ -77,9 +77,9 @@
       "since": null
     },
     "ar-lider": {
-      "status": "boşta",
-      "currentTask": null,
-      "since": null
+      "status": "tamamladı",
+      "currentTask": "Metronom pazarı: rakip analizi + pazar/monetizasyon araştırması teslim edildi",
+      "since": "31 Temmuz 2026, 00:40"
     },
     "teknoloji": {
       "status": "boşta",
@@ -137,6 +137,31 @@
       "time": "30 Temmuz 2026, 23:55",
       "agent": "Genel Müdür",
       "text": "Otomatik yayın hattı kuruldu: log artık token ile doğrudan GitHub'a gönderiliyor (uçtan uca test)."
+    },
+    {
+      "time": "31 Temmuz 2026, 00:10",
+      "agent": "Genel Müdür",
+      "text": "Patrondan yeni görev alındı: metronom uygulamaları için kapsamlı pazar araştırması. Kapsam netleştirildi (Android+iOS, geliştirme aşamasında; rakip analizi + farklılaşma + monetizasyon + pazar büyüklüğü)."
+    },
+    {
+      "time": "31 Temmuz 2026, 00:12",
+      "agent": "Genel Müdür",
+      "text": "Araştırma Ekip Lideri iki paralel koldan görevlendirildi: (1) rakip analizi, (2) pazar büyüklüğü + monetizasyon."
+    },
+    {
+      "time": "31 Temmuz 2026, 00:40",
+      "agent": "Araştırma Ekip Lideri",
+      "text": "Rakip analizi teslim edildi: 12 uygulama + araç içi rakipler, özellik matrisi, kullanıcı şikayet/övgü haritası (25+ kaynak)."
+    },
+    {
+      "time": "31 Temmuz 2026, 00:42",
+      "agent": "Araştırma Ekip Lideri",
+      "text": "Pazar ve monetizasyon raporu teslim edildi: pazar büyüklüğü, RevenueCat benchmark'ları, model önerisi, ASO ve riskler (30+ kaynak)."
+    },
+    {
+      "time": "31 Temmuz 2026, 00:44",
+      "agent": "Genel Müdür",
+      "text": "Fırsat analizi ve kapsamlı Word raporu hazırlanıyor; ardından patron kararına sunulacak."
     }
   ]
 }
