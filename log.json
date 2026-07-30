@@ -1,10 +1,10 @@
 {
-  "updated": "31 Temmuz 2026, 00:58",
+  "updated": "31 Temmuz 2026, 01:10",
   "agents": {
     "gm": {
       "status": "onay bekliyor",
-      "currentTask": "Metronom raporu teslim edildi — 5 karar patron onayında",
-      "since": "31 Temmuz 2026, 00:58"
+      "currentTask": "Metronom raporu v2 (Godot revizyonu) teslim edildi — 6 karar patron onayında",
+      "since": "31 Temmuz 2026, 01:10"
     },
     "yz-lider": {
       "status": "boşta",
@@ -167,6 +167,21 @@
       "time": "31 Temmuz 2026, 00:58",
       "agent": "Veri & Raporlama Lideri",
       "text": "13 bölümlük Word raporu tamamlandı (projeler/metronom/). GM panosu güncellendi: 1 proje, 5 görev, 3 rapor, 5 onay bekleyen karar."
+    },
+    {
+      "time": "31 Temmuz 2026, 01:00",
+      "agent": "Genel Müdür",
+      "text": "Patron kararı: metronom uygulaması Godot Engine ile geliştirilecek. Araştırma Ekip Lideri'ne Godot teknik fizibilite görevi verildi."
+    },
+    {
+      "time": "31 Temmuz 2026, 01:06",
+      "agent": "Araştırma Ekip Lideri",
+      "text": "Godot fizibilite raporu teslim edildi: koşullu fizibil — Android'de düşük gecikme ve arka plan ses saf Godot'ta yok; Godot arayüz + native ses çekirdeği (Oboe / AVAudioEngine) hibrit mimarisi önerildi (25+ kaynak)."
+    },
+    {
+      "time": "31 Temmuz 2026, 01:10",
+      "agent": "Veri & Raporlama Lideri",
+      "text": "Rapor v2 teslim edildi (14 bölüm, Godot revizyonu). Pano güncellendi: 6 görev, 4 rapor, 6 onay bekleyen karar."
     }
   ]
 }
