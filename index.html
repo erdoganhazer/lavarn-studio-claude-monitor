@@ -51,6 +51,13 @@
   }
   .brand h1 { font-size: 19px; font-weight: 600; letter-spacing: .2px; }
   .brand .updated { font-size: 12.5px; opacity: .85; margin-top: 2px; }
+  .live-ind {
+    display: inline-flex; align-items: center; gap: 5px;
+    margin-left: 10px; font-size: 11.5px; opacity: .85;
+    vertical-align: middle;
+  }
+  .live-ind .dot { width: 7px; height: 7px; border-radius: 50%; background: #9aa5af; }
+  .live-ind.online .dot { background: #4cd07d; }
   .counters { display: flex; flex-wrap: wrap; gap: 8px; }
   .counter {
     display: flex; align-items: center; gap: 7px;
@@ -278,7 +285,7 @@
   <div class="topbar-inner">
     <div class="brand">
       <h1>Lavarn Studio — Operasyon Monitörü</h1>
-      <div class="updated">Son güncelleme: <span id="updatedAt"></span></div>
+      <div class="updated">Son güncelleme: <span id="updatedAt"></span><span class="live-ind" id="liveInd" title="log.json bağlantı durumu"><span class="dot"></span><span id="liveIndText">çevrimdışı</span></span></div>
     </div>
     <div class="counters" id="counters"></div>
   </div>
@@ -314,7 +321,12 @@
 
 <script>
 /* === VERİ === */
-/* Bu bloğu Genel Müdür elle günceller. Yapıyı bozmadan yalnızca değerleri değiştirin.
+/* DİKKAT: Dinamik veri (updated, agents status/currentTask/since, activity) artık
+   aynı klasördeki log.json dosyasından beslenir; Genel Müdür SADECE log.json'u günceller.
+   Buradaki değerler yalnızca VARSAYILAN'dır (log.json'a erişilemezse, örn. file:// ile
+   açıldığında kullanılır). Ajan tanımları (id, name, emoji, team, role) ve docs statiktir,
+   burada kalır. log.json şeması:
+   { "updated": "...", "agents": { "<id>": { "status", "currentTask", "since" } }, "activity": [...] }
    - status: "çalışıyor" | "boşta" | "beklemede" | "blokaj"
    - currentTask ve since: görev yoksa null
    - activity: yeni olayları dizinin SONUNA ekleyin (ekran en yeniyi üstte gösterir) */
@@ -673,7 +685,7 @@ function renderCounters() {
 function toggleFilter(status) {
   activeFilter = (activeFilter === status) ? null : status;
   switchTab("live"); // filtre canlı durum ekranında görülür
-  renderAll();
+  renderLive();
 }
 
 function renderFilterNote() {
@@ -843,13 +855,64 @@ function switchTab(tabId) {
     p.classList.toggle("active", p.id === "panel-" + tabId));
 }
 
+/* ================= Canlı veri (log.json) ================= */
+const LOG_URL = "log.json";
+const REFRESH_MS = 30000;
+let fetchWarned = false;
+
+function applyLog(log) {
+  if (!log || typeof log !== "object") return false;
+  if (typeof log.updated === "string") DATA.updated = log.updated;
+  if (log.agents && typeof log.agents === "object") {
+    DATA.agents.forEach(a => {
+      const u = log.agents[a.id];
+      if (!u || typeof u !== "object") return;
+      if (typeof u.status === "string" && STATUSES[u.status]) a.status = u.status;
+      if ("currentTask" in u) a.currentTask = u.currentTask;
+      if ("since" in u) a.since = u.since;
+    });
+  }
+  if (Array.isArray(log.activity)) DATA.activity = log.activity;
+  return true;
+}
+
+function setLiveIndicator(online) {
+  const ind = document.getElementById("liveInd");
+  ind.classList.toggle("online", online);
+  document.getElementById("liveIndText").textContent = online ? "canlı" : "çevrimdışı";
+}
+
+function refreshFromLog() {
+  fetch(LOG_URL + "?ts=" + Date.now(), { cache: "no-store" })
+    .then(r => {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    })
+    .then(log => {
+      applyLog(log);
+      setLiveIndicator(true);
+      renderLive(); // açık sekme, aktif filtre ve açık doküman korunur
+    })
+    .catch(err => {
+      if (!fetchWarned) {
+        console.warn("Operasyon Monitörü: log.json alınamadı, gömülü varsayılan veriyle devam ediliyor. (" + err.message + ")");
+        fetchWarned = true;
+      }
+      setLiveIndicator(false);
+    });
+}
+
 /* ================= Başlatma ================= */
-function renderAll() {
+function renderLive() {
   document.getElementById("updatedAt").textContent = DATA.updated;
   renderCounters();
   renderFilterNote();
   renderTeams();
   renderActivity();
+}
+
+function renderAll() {
+  renderLive();
   renderDocList();
 }
 
@@ -857,10 +920,12 @@ document.getElementById("tabs").addEventListener("click", e => {
   const btn = e.target.closest(".tab-btn");
   if (btn) switchTab(btn.dataset.tab);
 });
-document.getElementById("clearFilterBtn").addEventListener("click", () => { activeFilter = null; renderAll(); });
+document.getElementById("clearFilterBtn").addEventListener("click", () => { activeFilter = null; renderLive(); });
 document.getElementById("docBackBtn").addEventListener("click", closeDoc);
 
-renderAll();
+renderAll();          // gömülü varsayılan veriyle ilk çizim
+refreshFromLog();     // hemen canlı veriyi dene
+setInterval(refreshFromLog, REFRESH_MS); // 30 sn'de bir tazele
 </script>
 </body>
 </html>

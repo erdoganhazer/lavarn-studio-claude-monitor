@@ -1,0 +1,33 @@
+{
+  "updated": "30 Temmuz 2026, 23:40",
+  "agents": {
+    "gm":        { "status": "boşta", "currentTask": null, "since": null },
+    "yz-lider":  { "status": "boşta", "currentTask": null, "since": null },
+    "backend":   { "status": "boşta", "currentTask": null, "since": null },
+    "frontend":  { "status": "boşta", "currentTask": null, "since": null },
+    "webdev":    { "status": "boşta", "currentTask": null, "since": null },
+    "devops":    { "status": "boşta", "currentTask": null, "since": null },
+    "qa":        { "status": "boşta", "currentTask": null, "since": null },
+    "ui":        { "status": "boşta", "currentTask": null, "since": null },
+    "ux":        { "status": "boşta", "currentTask": null, "since": null },
+    "grafiker":  { "status": "boşta", "currentTask": null, "since": null },
+    "et-lider":  { "status": "boşta", "currentTask": null, "since": null },
+    "pazaryeri": { "status": "boşta", "currentTask": null, "since": null },
+    "sosyal":    { "status": "boşta", "currentTask": null, "since": null },
+    "rakip":     { "status": "boşta", "currentTask": null, "since": null },
+    "musteri":   { "status": "boşta", "currentTask": null, "since": null },
+    "ar-lider":  { "status": "boşta", "currentTask": null, "since": null },
+    "teknoloji": { "status": "boşta", "currentTask": null, "since": null },
+    "bilimsel":  { "status": "boşta", "currentTask": null, "since": null },
+    "vr-lider":  { "status": "boşta", "currentTask": null, "since": null },
+    "analist":   { "status": "boşta", "currentTask": null, "since": null }
+  },
+  "activity": [
+    { "time": "30 Temmuz 2026, 18:30", "agent": "Genel Müdür", "text": "Organizasyon kuruldu (4 lider + 15 uzman)." },
+    { "time": "30 Temmuz 2026, 19:45", "agent": "Genel Müdür", "text": "Görev tanımları iyileştirildi: iş akışları, görev sınırları ve eskalasyon kuralları netleştirildi." },
+    { "time": "30 Temmuz 2026, 21:00", "agent": "Yazılım Ekip Lideri", "text": "Monitoring ekranı yayına hazırlandı." },
+    { "time": "30 Temmuz 2026, 22:45", "agent": "Genel Müdür", "text": "Monitör GitHub Pages üzerinden yayına alındı (erdoganhazer.github.io/lavarn-studio-claude-monitor)." },
+    { "time": "30 Temmuz 2026, 23:05", "agent": "Genel Müdür", "text": "Canlı güncelleme protokolü devreye girdi: her ajan hareketi bu ekrana işlenecek." },
+    { "time": "30 Temmuz 2026, 23:40", "agent": "Yazılım Ekip Lideri", "text": "Canlı log sistemi devreye alındı: monitör artık log.json'dan beslenip 30 sn'de bir kendini tazeliyor." }
+  ]
+}
