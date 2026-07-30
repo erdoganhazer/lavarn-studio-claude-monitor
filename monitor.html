@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lavarn Studio — Operasyon Monitörü</title>
+<style>
+  :root {
+    --primary: #1f4e8c;
+    --primary-dark: #163a69;
+    --primary-light: #eaf1fa;
+    --primary-mid: #3a6cb0;
+    --bg: #f4f7fb;
+    --card: #ffffff;
+    --text: #22303f;
+    --text-soft: #5b6b7c;
+    --border: #dde6f0;
+    --green: #1e8a4c;
+    --green-bg: #e3f5ea;
+    --gray: #6b7684;
+    --gray-bg: #eef1f4;
+    --yellow: #a97b0a;
+    --yellow-bg: #fdf3d7;
+    --red: #c0392b;
+    --red-bg: #fdeae7;
+    --radius: 10px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  /* ===== Üst bar ===== */
+  .topbar {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    color: #fff;
+    padding: 16px 20px;
+  }
+  .topbar-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 20px;
+    justify-content: space-between;
+  }
+  .brand h1 { font-size: 19px; font-weight: 600; letter-spacing: .2px; }
+  .brand .updated { font-size: 12.5px; opacity: .85; margin-top: 2px; }
+  .counters { display: flex; flex-wrap: wrap; gap: 8px; }
+  .counter {
+    display: flex; align-items: center; gap: 7px;
+    background: rgba(255,255,255,.13);
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 999px;
+    padding: 5px 13px;
+    font-size: 13px;
+    cursor: pointer;
+    user-select: none;
+    transition: background .15s, transform .1s;
+    color: #fff;
+  }
+  .counter:hover { background: rgba(255,255,255,.22); }
+  .counter.active { background: #fff; color: var(--primary-dark); font-weight: 600; }
+  .counter .dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+  .counter .num { font-weight: 700; }
+
+  /* ===== Sekmeler ===== */
+  .tabs {
+    max-width: 1100px;
+    margin: 18px auto 0;
+    padding: 0 16px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    border-bottom: 2px solid var(--border);
+  }
+  .tab-btn {
+    appearance: none;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    padding: 9px 14px;
+    font-size: 14.5px;
+    font-family: inherit;
+    color: var(--text-soft);
+    cursor: pointer;
+    border-radius: 6px 6px 0 0;
+    transition: color .15s, background .15s;
+  }
+  .tab-btn:hover { background: var(--primary-light); color: var(--primary); }
+  .tab-btn.active {
+    color: var(--primary);
+    font-weight: 600;
+    border-bottom-color: var(--primary);
+  }
+  .content { max-width: 1100px; margin: 0 auto; padding: 18px 16px 40px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ===== Filtre bilgisi ===== */
+  .filter-note {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: var(--primary-light);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 9px 14px;
+    margin-bottom: 16px;
+    font-size: 13.5px;
+    color: var(--primary-dark);
+  }
+  .filter-note.visible { display: flex; }
+  .filter-note button {
+    appearance: none; border: 1px solid var(--primary);
+    background: #fff; color: var(--primary);
+    border-radius: 6px; padding: 3px 10px;
+    font-size: 12.5px; cursor: pointer; font-family: inherit;
+  }
+  .filter-note button:hover { background: var(--primary); color: #fff; }
+
+  /* ===== Ekip grupları ve ajan kartları ===== */
+  .team-group { margin-bottom: 26px; }
+  .team-head {
+    display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+    padding-bottom: 8px; margin-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .team-head h2 { font-size: 16px; color: var(--primary-dark); font-weight: 600; }
+  .team-head .team-meta { font-size: 12.5px; color: var(--text-soft); }
+  .agent-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
+    gap: 12px;
+  }
+  .agent-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 13px 14px;
+    box-shadow: 0 1px 3px rgba(31, 78, 140, .06);
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .agent-top { display: flex; align-items: flex-start; gap: 10px; }
+  .agent-emoji {
+    font-size: 22px; line-height: 1;
+    background: var(--primary-light);
+    border-radius: 8px; padding: 8px; flex: 0 0 auto;
+  }
+  .agent-name { font-weight: 600; font-size: 14.5px; }
+  .agent-role { font-size: 12.5px; color: var(--text-soft); margin-top: 1px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 600;
+    border-radius: 999px; padding: 3px 10px;
+    cursor: pointer; user-select: none;
+    align-self: flex-start;
+  }
+  .badge .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .badge.calisiyor { background: var(--green-bg); color: var(--green); }
+  .badge.calisiyor .dot { background: var(--green); animation: pulse 1.4s ease-in-out infinite; }
+  .badge.bosta { background: var(--gray-bg); color: var(--gray); }
+  .badge.bosta .dot { background: var(--gray); }
+  .badge.beklemede { background: var(--yellow-bg); color: var(--yellow); }
+  .badge.beklemede .dot { background: var(--yellow); }
+  .badge.blokaj { background: var(--red-bg); color: var(--red); }
+  .badge.blokaj .dot { background: var(--red); }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(30, 138, 76, .5); }
+    50% { box-shadow: 0 0 0 5px rgba(30, 138, 76, 0); }
+  }
+  .agent-task {
+    font-size: 12.5px;
+    background: var(--bg);
+    border-left: 3px solid var(--primary-mid);
+    border-radius: 4px;
+    padding: 6px 9px;
+    color: var(--text);
+  }
+  .agent-task .since { color: var(--text-soft); display: block; margin-top: 2px; font-size: 11.5px; }
+  .empty-note {
+    background: var(--card); border: 1px dashed var(--border);
+    border-radius: var(--radius); padding: 20px; text-align: center;
+    color: var(--text-soft); font-size: 14px;
+  }
+
+  /* ===== Etkinlik akışı ===== */
+  .activity-list { display: flex; flex-direction: column; gap: 0; max-width: 720px; }
+  .activity-item {
+    display: flex; gap: 14px;
+    position: relative;
+    padding: 0 0 22px 0;
+  }
+  .activity-rail { display: flex; flex-direction: column; align-items: center; flex: 0 0 auto; }
+  .activity-dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--primary); border: 3px solid var(--primary-light);
+    box-sizing: content-box; margin-top: 4px;
+  }
+  .activity-line { width: 2px; flex: 1; background: var(--border); margin-top: 4px; }
+  .activity-item:last-child .activity-line { display: none; }
+  .activity-body {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 10px 14px; flex: 1;
+    box-shadow: 0 1px 3px rgba(31, 78, 140, .05);
+  }
+  .activity-time { font-size: 12px; color: var(--text-soft); }
+  .activity-agent { font-size: 12.5px; font-weight: 600; color: var(--primary); margin-left: 8px; }
+  .activity-text { margin-top: 3px; font-size: 14px; }
+
+  /* ===== Dokümanlar ===== */
+  .doc-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+  .doc-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 15px;
+    cursor: pointer; display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 1px 3px rgba(31, 78, 140, .06);
+    transition: border-color .15s, transform .1s;
+  }
+  .doc-card:hover { border-color: var(--primary-mid); transform: translateY(-1px); }
+  .doc-card .doc-emoji { font-size: 24px; }
+  .doc-card .doc-title { font-weight: 600; font-size: 14px; color: var(--primary-dark); }
+  .doc-view { display: none; }
+  .doc-view.visible { display: block; }
+  .doc-back {
+    appearance: none; border: 1px solid var(--primary);
+    background: #fff; color: var(--primary);
+    border-radius: 6px; padding: 6px 14px; font-size: 13px;
+    cursor: pointer; font-family: inherit; margin-bottom: 14px;
+  }
+  .doc-back:hover { background: var(--primary); color: #fff; }
+  .doc-content {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 22px 24px;
+    max-width: 820px;
+  }
+  .doc-content h1 { font-size: 21px; color: var(--primary-dark); margin: 0 0 12px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+  .doc-content h2 { font-size: 17px; color: var(--primary); margin: 20px 0 8px; }
+  .doc-content h3 { font-size: 15px; color: var(--primary-dark); margin: 16px 0 6px; }
+  .doc-content p { margin: 8px 0; }
+  .doc-content ul, .doc-content ol { margin: 8px 0 8px 22px; }
+  .doc-content li { margin: 3px 0; }
+  .doc-content pre {
+    background: #f0f4f9; border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px 14px; overflow-x: auto; font-size: 13px; margin: 10px 0;
+    line-height: 1.45;
+  }
+  .doc-content code { font-family: Consolas, "Courier New", monospace; }
+  .doc-content p code, .doc-content li code {
+    background: #f0f4f9; border-radius: 4px; padding: 1px 5px; font-size: 13px;
+  }
+  .doc-content blockquote {
+    border-left: 4px solid var(--primary-mid);
+    background: var(--primary-light);
+    margin: 10px 0; padding: 8px 14px; border-radius: 0 8px 8px 0;
+    color: var(--primary-dark); font-size: 14px;
+  }
+  .doc-content hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+  .doc-content .md-link { color: var(--primary); text-decoration: underline dotted; }
+
+  @media (max-width: 560px) {
+    .topbar-inner { flex-direction: column; align-items: flex-start; }
+    .agent-grid, .doc-list { grid-template-columns: 1fr; }
+    .doc-content { padding: 16px; }
+    .tab-btn { padding: 8px 10px; font-size: 13.5px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <h1>Lavarn Studio — Operasyon Monitörü</h1>
+      <div class="updated">Son güncelleme: <span id="updatedAt"></span></div>
+    </div>
+    <div class="counters" id="counters"></div>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button class="tab-btn active" data-tab="live">Canlı Durum</button>
+  <button class="tab-btn" data-tab="activity">Etkinlik Akışı</button>
+  <button class="tab-btn" data-tab="docs">Organizasyon Dosyaları</button>
+</nav>
+
+<main class="content">
+  <section class="panel active" id="panel-live">
+    <div class="filter-note" id="filterNote">
+      <span id="filterNoteText"></span>
+      <button type="button" id="clearFilterBtn">Filtreyi temizle</button>
+    </div>
+    <div id="teams"></div>
+  </section>
+
+  <section class="panel" id="panel-activity">
+    <div class="activity-list" id="activityList"></div>
+  </section>
+
+  <section class="panel" id="panel-docs">
+    <div class="doc-list" id="docList"></div>
+    <div class="doc-view" id="docView">
+      <button type="button" class="doc-back" id="docBackBtn">&#8592; Dosya listesine dön</button>
+      <article class="doc-content" id="docContent"></article>
+    </div>
+  </section>
+</main>
+
+<script>
+/* === VERİ === */
+/* Bu bloğu Genel Müdür elle günceller. Yapıyı bozmadan yalnızca değerleri değiştirin.
+   - status: "çalışıyor" | "boşta" | "beklemede" | "blokaj"
+   - currentTask ve since: görev yoksa null
+   - activity: yeni olayları dizinin SONUNA ekleyin (ekran en yeniyi üstte gösterir) */
+const DATA = {
+  updated: "30 Temmuz 2026, 21:00",
+
+  agents: [
+    { id: "gm",        name: "Genel Müdür (Claude)",        emoji: "🧑‍💼", team: "Yönetim",   role: "İşleri analiz eder, liderlere atar; patrona raporlar", status: "boşta", currentTask: null, since: null },
+
+    { id: "yz-lider",  name: "Yazılım Ekip Lideri",         emoji: "💻", team: "Yazılım",   role: "Mimari, teknoloji seçimi, geliştirme ve kalite yönetimi", status: "boşta", currentTask: null, since: null },
+    { id: "backend",   name: "Backend Geliştirici",         emoji: "🔧", team: "Yazılım",   role: "API, veritabanı şeması, iş mantığı ve entegrasyonlar", status: "boşta", currentTask: null, since: null },
+    { id: "frontend",  name: "Frontend Geliştirici",        emoji: "🖥️", team: "Yazılım",   role: "Etkileşimli uygulama arayüzleri (ekranlar, formlar, panolar)", status: "boşta", currentTask: null, since: null },
+    { id: "webdev",    name: "Web Developer",               emoji: "🌐", team: "Yazılım",   role: "Tanıtım siteleri, landing page ve CMS kurulumları", status: "boşta", currentTask: null, since: null },
+    { id: "devops",    name: "DevOps Uzmanı",               emoji: "⚙️", team: "Yazılım",   role: "Deploy, CI/CD, altyapı, güvenlik ve yedekleme", status: "boşta", currentTask: null, since: null },
+    { id: "qa",        name: "QA/Test Uzmanı",              emoji: "🧪", team: "Yazılım",   role: "Kalite kapısı; test senaryoları, hata raporu, yayın onayı", status: "boşta", currentTask: null, since: null },
+    { id: "ui",        name: "UI Uzmanı",                   emoji: "🎨", team: "Yazılım",   role: "Ekran/arayüz tasarımı ve tasarım sistemi", status: "boşta", currentTask: null, since: null },
+    { id: "ux",        name: "UX Uzmanı",                   emoji: "🧭", team: "Yazılım",   role: "Kullanıcı akışları, bilgi mimarisi, kullanılabilirlik", status: "boşta", currentTask: null, since: null },
+    { id: "grafiker",  name: "Grafiker",                    emoji: "🖌️", team: "Yazılım",   role: "Marka görsel kimliği ve pazarlama görselleri", status: "boşta", currentTask: null, since: null },
+
+    { id: "et-lider",  name: "E-Ticaret Ekip Lideri",       emoji: "🛒", team: "E-Ticaret", role: "Mağaza/pazaryeri operasyonları ve satış kanalı yönetimi", status: "boşta", currentTask: null, since: null },
+    { id: "pazaryeri", name: "Pazaryeri Uzmanı",            emoji: "🏬", team: "E-Ticaret", role: "Trendyol, Hepsiburada, Amazon hesap ve listeleme operasyonları", status: "boşta", currentTask: null, since: null },
+    { id: "sosyal",    name: "Sosyal Medya Uzmanı",         emoji: "📣", team: "E-Ticaret", role: "Kanal stratejisi, içerik takvimi ve kampanya planları", status: "boşta", currentTask: null, since: null },
+    { id: "rakip",     name: "Rakip Analisti",              emoji: "🕵️", team: "E-Ticaret", role: "Rakip fiyat, kampanya ve listeleme hamlelerinin takibi", status: "boşta", currentTask: null, since: null },
+    { id: "musteri",   name: "Müşteri Hizmetleri Uzmanı",   emoji: "💬", team: "E-Ticaret", role: "İletişim standartları, şablonlar, iade/şikayet süreçleri", status: "boşta", currentTask: null, since: null },
+
+    { id: "ar-lider",  name: "Araştırma Ekip Lideri",       emoji: "🔬", team: "Araştırma", role: "Stratejik araştırma: pazar, teknoloji, fizibilite", status: "boşta", currentTask: null, since: null },
+    { id: "teknoloji", name: "Teknolojik Araştırma Uzmanı", emoji: "🤖", team: "Araştırma", role: "Teknoloji/araç kıyasları ve teknik fizibilite", status: "boşta", currentTask: null, since: null },
+    { id: "bilimsel",  name: "Bilimsel Araştırma Uzmanı",   emoji: "📚", team: "Araştırma", role: "Literatür taraması ve bilimsel kaynak analizi", status: "boşta", currentTask: null, since: null },
+
+    { id: "vr-lider",  name: "Veri & Raporlama Lideri",     emoji: "📊", team: "Veri",      role: "Metrik takibi, karar destek ve patron raporları", status: "boşta", currentTask: null, since: null },
+    { id: "analist",   name: "Veri Analisti",               emoji: "📈", team: "Veri",      role: "Veri toplama/analiz, KPI takibi, karlılık hesapları", status: "boşta", currentTask: null, since: null }
+  ],
+
+  activity: [
+    { time: "30 Temmuz 2026, 18:30", agent: "Genel Müdür", text: "Organizasyon kuruldu (4 lider + 15 uzman)." },
+    { time: "30 Temmuz 2026, 19:45", agent: "Genel Müdür", text: "Görev tanımları iyileştirildi: iş akışları, görev sınırları ve eskalasyon kuralları netleştirildi." },
+    { time: "30 Temmuz 2026, 21:00", agent: "Yazılım Ekip Lideri", text: "Monitoring ekranı yayına hazırlandı." }
+  ],
+
+  docs: [
+    {
+      title: "00 — Organizasyon Şeması",
+      emoji: "🏢",
+      content: `# Organizasyon Şeması
+
+> Güncelleme: 30 Temmuz 2026 — Kadro patron onayıyla kuruldu.
+
+\`\`\`
+Founder (Patron): Hazer
+└── Genel Müdür (Claude)
+    ├── 💻 Yazılım Ekip Lideri ............ 8 uzman
+    ├── 🛒 E-Ticaret Ekip Lideri .......... 4 uzman
+    ├── 🔬 Araştırma Ekip Lideri .......... 2 uzman
+    └── 📊 Veri & Raporlama Lideri ........ 1 uzman
+\`\`\`
+
+**Toplam:** 4 lider + 15 uzman.
+
+## Çalışma modeli
+- Genel Müdür işi analiz eder, ilgili lidere atar; liderler uzmanlarını alt ajan olarak çalıştırır.
+- Uzmanlar proje bazında göreve çağrılır; boşta bekleyen yoktur.
+- Kritik kararlar (bütçe, yap/yapma, kapsam) daima patron onayına sunulur.
+- Her uzmanın çıktısı lider üzerinden GM'e, GM'den rapor olarak patrona gider.
+- Durum raporlarından sonra Genel Müdür Panosu güncellenir.
+
+## Ekip dosyaları
+- [01 — Yazılım Ekibi](01-yazilim-ekibi.md)
+- [02 — E-Ticaret Ekibi](02-eticaret-ekibi.md)
+- [03 — Araştırma Ekibi](03-arastirma-ekibi.md)
+- [04 — Veri & Raporlama Ekibi](04-veri-raporlama-ekibi.md)`
+    },
+    {
+      title: "01 — Yazılım Ekibi",
+      emoji: "💻",
+      content: `# 💻 Yazılım Ekibi — 8 Uzman
+
+**Lider:** Yazılım Ekip Lideri
+**Sorumluluk:** Mimari, teknoloji seçimi, geliştirme, DevOps, test, tasarım ve tasarım uygulaması.
+
+## Lider talimatı
+- Her işi önce parçalara ayır, uzmanlara sahipli görev olarak ata; bağımsız işleri paralel çalıştır.
+- Mimari ve teknoloji kararlarını gerekçelendirerek GM'e sun; büyük kararlar GM üzerinden patron onayına gider.
+- **QA onayı olmayan hiçbir iş "tamamlandı" sayılmaz.**
+- Çıktı: çalışan kod + teknik özet rapor (ne yapıldı, nasıl çalışır, bilinen sınırlar).
+
+## Ekip içi iş akışı
+\`\`\`
+UX Uzmanı → UI Uzmanı → Frontend / Web Developer → QA/Test → Lider onayı
+Backend ─────────────────────────↗ (API sözleşmesi ile paralel)
+DevOps: yayın öncesi son halka │ Grafiker: UI ve Sosyal Medya'ya görsel tedarik
+\`\`\`
+
+## Görev sınırları (çakışma önleme)
+- **Frontend vs Web Developer:** Uygulama arayüzü (etkileşimli, state'li ekranlar) → Frontend. Tanıtım sitesi, landing page, CMS → Web Developer.
+- **UI vs Grafiker:** Ekran/arayüz tasarımı → UI. Logo, banner, sosyal görsel, marka kimliği → Grafiker.
+
+---
+
+## 1. Backend Geliştirici
+- **Tanım:** API'ler, veritabanı şeması, iş mantığı ve harici servis entegrasyonlarını geliştirir.
+- **Sorumluluklar:** API tasarımı ve dokümantasyonu; veritabanı şeması ve migrasyonlar; auth, veri doğrulama, hata yönetimi; performans (sorgu optimizasyonu, önbellek).
+- **Girdi ←** Liderden görev + UX akışları; Frontend ile birlikte API sözleşmesi.
+- **Çıktı →** Çalışan servis kodu + endpoint/şema dokümanı → QA'ya test için, Frontend'e sözleşme olarak.
+- **Kalite kriteri:** Kritik uçlar birim testli; hata durumları anlamlı mesaj döner; sır/anahtar kodda tutulmaz.
+- **Eskalasyon:** Şema değişikliği başka ekibi etkiliyorsa veya harici servis maliyeti varsa → Lider → GM.
+- **Araçlar:** Python/Node, SQL, Bash, Git.
+
+## 2. Frontend Geliştirici
+- **Tanım:** Etkileşimli uygulama arayüzlerini (state'li ekranlar, formlar, panolar) geliştirir.
+- **Sorumluluklar:** UI spec'ini birebir uygulama; API bağlantısı; responsive ve erişilebilir arayüz; yeniden kullanılabilir bileşen kütüphanesi.
+- **Girdi ←** UI Uzmanı'ndan ekran spec'i; Backend'den API sözleşmesi.
+- **Çıktı →** Çalışan arayüz + bileşen listesi → QA'ya.
+- **Kalite kriteri:** Mobil/masaüstü uyumlu; UI spec'inden sapma varsa gerekçeli; konsol hatasız.
+- **Eskalasyon:** Spec uygulanamıyorsa UI Uzmanı ile çözemezse → Lider.
+- **Araçlar:** React/HTML/CSS/JS, Tailwind.
+
+## 3. Web Developer
+- **Tanım:** Tanıtım siteleri, landing page'ler, kurumsal sayfalar ve CMS kurulumlarını yapar.
+- **Sorumluluklar:** Hızlı yüklenen SEO uyumlu sayfalar; alan adı/yayın hazırlığı (DevOps ile); içerik güncellenebilirliği.
+- **Girdi ←** UI/Grafiker'den tasarım ve görseller; E-Ticaret ekibinden içerik ihtiyaçları.
+- **Çıktı →** Yayınlanabilir site dosyaları + SEO kontrol listesi → QA'ya, DevOps'a.
+- **Kalite kriteri:** Lighthouse benzeri temel skorlar makul; meta/OG etiketleri tam; kırık link yok.
+- **Eskalasyon:** Barındırma/alan adı satın alma gerektiren her adım → Lider → GM → patron onayı.
+- **Araçlar:** HTML/CSS/JS, statik site araçları.
+
+## 4. DevOps Uzmanı
+- **Tanım:** Deploy, CI/CD, sunucu/altyapı, güvenlik ve yedeklemeyi yönetir.
+- **Sorumluluklar:** Yayın hattı kurulumu; ortam yapılandırması; izleme/loglama; yedekleme ve geri dönüş planı; temel güvenlik sertleştirmesi.
+- **Girdi ←** Backend/Frontend/Web'den yayına hazır kod (QA onaylı).
+- **Çıktı →** Deploy planı/scriptleri + altyapı raporu (maliyet dahil) → Lidere.
+- **Kalite kriteri:** Her yayının geri dönüş planı var; ortam sırları güvenli; adımlar tekrar üretilebilir şekilde belgeli.
+- **Eskalasyon:** **Aylık maliyet doğuran her altyapı kararı yayın öncesi GM → patron onayına gider.**
+- **Araçlar:** Bash, Docker, bulut CLI'ları.
+
+## 5. QA/Test Uzmanı
+- **Tanım:** Kalite kapısıdır; test senaryoları yazar, hataları raporlar, yayına onay verir.
+- **Sorumluluklar:** Kritik akışlar için test senaryoları; otomasyon (mümkünse); hata kaydı (adım adım tekrar tarifi + beklenen/gerçekleşen); regresyon kontrolü.
+- **Girdi ←** Tüm geliştiricilerden "test edilmeye hazır" işler + UX'ten beklenen akışlar.
+- **Çıktı →** Test raporu + hata listesi → ilgili geliştiriciye; onay/ret kararı → Lidere.
+- **Kalite kriteri:** Kritik akışların tamamı senaryolu; her hata tekrar üretilebilir tarifli; onay kararı gerekçeli.
+- **Eskalasyon:** Yayını engelleyen hata çözülmüyorsa → Lider (yayın ertelenir, GM bilgilendirilir).
+- **Araçlar:** pytest, jest, Bash.
+
+## 6. UI Uzmanı
+- **Tanım:** Ekran ve arayüz tasarımı yapar; tasarım sistemini kurar ve korur.
+- **Sorumluluklar:** Tasarım sistemi (renk, tipografi, bileşenler); ekran tasarımları; Frontend'in uygulayabileceği net spec (aralıklar, durumlar, boyutlar).
+- **Girdi ←** UX'ten akış ve wireframe'ler; Grafiker'den marka öğeleri.
+- **Çıktı →** Ekran spec'leri + stil rehberi → Frontend/Web Developer'a.
+- **Kalite kriteri:** Spec, tasarımcıya soru sormadan uygulanabilecek netlikte; tasarım sistemiyle tutarlı.
+- **Eskalasyon:** Marka kimliğini değiştirecek kararlar → Lider → GM.
+- **Araçlar:** HTML/CSS mockup, SVG, spec dokümanları.
+
+## 7. UX Uzmanı
+- **Tanım:** Kullanıcı akışlarını, bilgi mimarisini ve kullanılabilirliği tasarlar; ekibin ilk halkasıdır.
+- **Sorumluluklar:** Kullanıcı senaryoları; akış diyagramları; wireframe'ler; sürtünme noktası analizi ve çözüm önerisi.
+- **Girdi ←** GM/Liderden iş hedefi; Araştırma ekibinden pazar/kullanıcı bulguları.
+- **Çıktı →** Akış şemaları + wireframe + senaryolar → UI Uzmanı'na; beklenen akışlar → QA'ya.
+- **Kalite kriteri:** Her akışın başarı ölçütü tanımlı; kenar durumlar (hata, boş durum) düşünülmüş.
+- **Eskalasyon:** Kapsamı büyüten akış önerileri → Lider → GM.
+- **Araçlar:** Mermaid akış diyagramları, wireframe, senaryo dokümanları.
+
+## 8. Grafiker
+- **Tanım:** Marka görsel kimliği ve pazarlama görsellerini üretir.
+- **Sorumluluklar:** Logo ve marka kimliği; banner/kampanya görselleri; sosyal medya görselleri; UI'a marka öğesi tedariki.
+- **Girdi ←** Sosyal Medya Uzmanı'ndan kreatif brief; UI'dan tasarım sistemi kısıtları.
+- **Çıktı →** Görsel dosyalar + kullanım notu (boyut, mecra) → talep eden uzmana.
+- **Kalite kriteri:** Marka tutarlılığı; her görsel doğru boyut/formatta ve mecraya uygun.
+- **Eskalasyon:** Marka kimliğinde köklü değişiklik → Lider → GM → patron onayı.
+- **Araçlar:** SVG üretimi, Python görsel işleme (Pillow), brief şablonları.`
+    },
+    {
+      title: "02 — E-Ticaret Ekibi",
+      emoji: "🛒",
+      content: `# 🛒 E-Ticaret Ekibi — 4 Uzman
+
+**Lider:** E-Ticaret Ekip Lideri
+**Sorumluluk:** Mağaza ve pazaryeri operasyonları, satış kanalı yönetimi, müşteri tarafı, dönüşüm optimizasyonu.
+
+## Lider talimatı
+- Operasyonları planla, uzmanlarına dağıt; her adımı dokümante ettir.
+- Fiyat, komisyon ve kampanya kararlarında Veri Analisti'nden karlılık hesabı almadan ilerleme.
+- Kanal açma/kapama ve bütçeli her karar GM üzerinden patron onayına gider.
+- Çıktı: uygulama adımları + operasyon raporu.
+
+## Ekip içi iş akışı
+\`\`\`
+Rakip Analisti → fiyat/fırsat girdisi → Pazaryeri Uzmanı → listeleme/satış
+Sosyal Medya ← Grafiker'den (Yazılım ekibi) görsel tedarik
+Müşteri Hizmetleri ← tüm kanallardan geri bildirim → iyileştirme önerisi → Lidere
+\`\`\`
+
+## Görev sınırı (çakışma önleme)
+- **Rakip Analisti (bu ekip):** operasyonel takip — rakip fiyat, kampanya, listeleme hamleleri.
+- **Araştırma Ekibi:** stratejik analiz — pazar büyüklüğü, trend, fizibilite. Yeni pazar sorusu oraya gider.
+
+---
+
+## 1. Pazaryeri Uzmanı
+- **Tanım:** Trendyol, Hepsiburada, Amazon hesap ve listeleme operasyonlarını yürütür.
+- **Sorumluluklar:** Hesap/mağaza yapılandırması; kategori-özellik eksiksiz listeleme; kampanya başvuruları; kargo/iade süreç ayarları; buybox ve sıralama takibi.
+- **Girdi ←** Rakip Analisti'nden fiyat aralığı; Ürün içerik ihtiyacında Sosyal Medya/Grafiker'den destek; Veri Analisti'nden karlılık hesabı.
+- **Çıktı →** Listeleme planı + operasyon raporu (satış, komisyon, sorunlar) → Lidere.
+- **Kalite kriteri:** Her listeleme kategori/özellik/görsel eksiksiz; güncel komisyon ve kural bilgisi kaynaklı (pazaryeri dokümanından doğrulanmış); karlılık hesabı onaylı olmadan fiyat girilmez.
+- **Eskalasyon:** Hesap cezası/askıya alma riski, yeni kanal açma, komisyon değişikliği → Lider → GM.
+- **Araçlar:** WebSearch/web_fetch (pazaryeri dokümanları), xlsx (listeleme/fiyat tabloları).
+
+## 2. Sosyal Medya Uzmanı
+- **Tanım:** Sosyal kanal stratejisi, içerik takvimi ve kampanya planlarını hazırlar.
+- **Sorumluluklar:** Kanal stratejisi (hangi mecra, hangi kitle); haftalık/aylık içerik takvimi; kampanya kurguları; Grafiker'e kreatif brief; performans metriği tanımı (erişim, etkileşim, dönüşüm).
+- **Girdi ←** Liderden hedefler; Rakip Analisti'nden rakip içerik/kampanya örnekleri; Grafiker'den görseller.
+- **Çıktı →** İçerik/kampanya takvimi + strateji notu → Lidere; kreatif brief → Grafiker'e.
+- **Kalite kriteri:** Her içerik hedef kitle + amaç + ölçüt ile eşleşmiş; takvim uygulanabilir yoğunlukta.
+- **Eskalasyon:** Ücretli reklam bütçesi gerektiren her plan → Lider → GM → patron onayı.
+- **Araçlar:** İçerik takvimi (xlsx), WebSearch (trend takibi), brief şablonları.
+
+## 3. Rakip Analisti
+- **Tanım:** Rakiplerin ürün, fiyat, kampanya ve listeleme hamlelerini operasyonel düzeyde takip eder.
+- **Sorumluluklar:** Rakip fiyat takip tablosu; kampanya/indirim dönemleri takibi; rakip listeleme kalitesi kıyası; fırsat/tehdit uyarıları.
+- **Girdi ←** Liderden takip edilecek rakip/ürün listesi.
+- **Çıktı →** Kaynaklı rakip analiz raporu + fiyat tablosu → Pazaryeri Uzmanı'na ve Lidere; fırsat uyarıları anlık → Lidere.
+- **Kalite kriteri:** Her veri tarih + kaynak linkli; kıyaslar tablo halinde; yorum ile veri ayrılmış.
+- **Eskalasyon:** Fiyat savaşı sinyali veya pazara yeni güçlü oyuncu girişi → Lider → GM (rapor öne çekilir).
+- **Araçlar:** WebSearch/web_fetch, xlsx (karşılaştırma tabloları).
+
+## 4. Müşteri Hizmetleri Uzmanı
+- **Tanım:** Müşteri iletişim standartlarını, şablonları ve iade/şikayet süreçlerini kurar ve iyileştirir.
+- **Sorumluluklar:** Sık soru-cevap şablon seti; iade/değişim akışı (mevzuata uygun); şikayet kök neden analizi; memnuniyet standartları (yanıt süresi, ton).
+- **Girdi ←** Pazaryeri Uzmanı'ndan kanal kuralları; müşteri geri bildirimleri.
+- **Çıktı →** Müşteri hizmetleri el kitabı + şablon seti → Lidere; iyileştirme önerileri (ürün/listeleme/kargo) → ilgili uzmana.
+- **Kalite kriteri:** Şablonlar marka tonunda ve mevzuata uygun; her şikayet tipi için tanımlı akış var.
+- **Eskalasyon:** Hukuki risk içeren şikayetler (tüketici hakem heyeti vb.) → Lider → GM.
+- **Araçlar:** docx (el kitabı/şablonlar), süreç akışları, WebSearch (tüketici mevzuatı).`
+    },
+    {
+      title: "03 — Araştırma Ekibi",
+      emoji: "🔬",
+      content: `# 🔬 Araştırma Ekibi — 2 Uzman
+
+**Lider:** Araştırma Ekip Lideri
+**Sorumluluk:** Stratejik araştırma — pazar, teknoloji, bilimsel literatür, fizibilite girdileri.
+
+## Lider talimatı
+- Araştırma sorusunu netleştirmeden uzman görevlendirme: her görevde soru + kapsam + beklenen çıktı formatı tanımlı olmalı.
+- İki uzmanın bulgularını tek raporda birleştir; çelişen bulguları gizleme, açıkça yaz.
+- Her rapor fizibilite kararına girdi verecek şekilde "sonuç ve öneri" bölümüyle biter.
+- Çıktı: kaynaklı araştırma raporu.
+
+## Görev sınırı (çakışma önleme)
+- Rakiplerin günlük fiyat/kampanya takibi → E-Ticaret ekibindeki Rakip Analisti.
+- Pazar büyüklüğü, trend, yeni pazar fizibilitesi, teknoloji seçimi → bu ekip.
+
+---
+
+## 1. Teknolojik Araştırma Uzmanı
+- **Tanım:** Teknoloji ve araç kıyaslamaları, teknik fizibilite ve sektör teknoloji trendlerini araştırır.
+- **Sorumluluklar:** Alternatif teknolojilerin kriter tablosuyla kıyası (maliyet, olgunluk, topluluk, entegrasyon, kilitlenme riski); teknik fizibilite değerlendirmesi; trend takibi.
+- **Girdi ←** Liderden araştırma sorusu; Yazılım Liderinden teknik kısıtlar.
+- **Çıktı →** Teknoloji kıyas raporu + gerekçeli tek öneri → Lidere; teknik girdiler → Yazılım Liderine.
+- **Kalite kriteri:** Her iddia kaynaklı; kıyas en az 3 alternatifli ve kriter tablolu; öneri "neden bu, neden diğerleri değil" gerekçeli; maliyet tahmini dahil.
+- **Eskalasyon:** Tüm alternatifler önemli maliyet/risk içeriyorsa → Lider → GM (karar patrona taşınır).
+- **Araçlar:** WebSearch, web_fetch, karşılaştırma tabloları.
+
+## 2. Bilimsel Araştırma Uzmanı
+- **Tanım:** Literatür taraması ve bilimsel kaynak analiziyle veri temelli bulgular üretir.
+- **Sorumluluklar:** Hakemli/birincil kaynak taraması; bulgu sentezi; kanıt düzeyi sınıflandırması; kaynakça yönetimi.
+- **Girdi ←** Liderden araştırma sorusu ve kapsam.
+- **Çıktı →** Kaynaklı literatür raporu → Lidere; ilgili bulgular → diğer ekiplere Lider üzerinden.
+- **Kalite kriteri:** Birincil kaynak önceliği; her bulgunun kanıt düzeyi etiketli (güçlü / orta / sınırlı); kaynakça eksiksiz ve erişilebilir linkli; popüler medya kaynağı tek başına dayanak yapılmaz.
+- **Eskalasyon:** Kanıt yetersizse "bilmiyoruz" diye raporla — zorlama sonuç çıkarma; kritik belirsizlik → Lider → GM.
+- **Araçlar:** WebSearch, web_fetch, kaynakça yönetimi.`
+    },
+    {
+      title: "04 — Veri & Raporlama Ekibi",
+      emoji: "📊",
+      content: `# 📊 Veri & Raporlama Ekibi — 1 Uzman
+
+**Lider:** Veri & Raporlama Lideri
+**Sorumluluk:** Metrik takibi, analiz, karar destek, patron raporları/dokümanları, pano veri güncelliği.
+
+## Lider talimatı
+- Diğer liderlerin çıktılarından metrik ve durum raporu derle; patron dosyalarını (docx/pptx/xlsx) hazırla.
+- Her proje başında Veri Analisti'yle KPI setini tanımla ve GM onayına sun.
+- Rapor formatı standardı: Özet → Yapılanlar → Devam edenler → Blokajlar/Riskler → Sonraki adımlar → Karar gereken noktalar.
+- Çıktı: özet + tablolar + gerekiyorsa dosya; Genel Müdür Panosu için güncel veri.
+
+---
+
+## 1. Veri Analisti
+- **Tanım:** Tüm ekiplerin verisini toplar, analiz eder; karar destek ve KPI takibi sağlar.
+- **Sorumluluklar:** Proje başında KPI tanımı (hedef değerlerle); veri toplama ve doğrulama; analiz ve trend takibi; karlılık hesapları (E-Ticaret için fiyat/komisyon analizi dahil); pano verisinin hazırlanması.
+- **Girdi ←** Tüm liderlerden operasyon verileri; Pazaryeri Uzmanı'ndan satış/komisyon verileri.
+- **Çıktı →** Analiz raporu + KPI tabloları → Lidere; karlılık hesapları → E-Ticaret Liderine; pano veri güncellemesi → GM'e.
+- **Kalite kriteri:** Analizler script'le tekrar üretilebilir; her grafik/tablo tek mesaj verir; sonuç daima "ne yapmalıyız" önerisine bağlanır; varsayımlar açıkça yazılır.
+- **Eskalasyon:** Veri güvenilir değilse analizi bekletip bildir — tahmini veri gerçekmiş gibi sunulmaz; hedeften ciddi sapma → Lider → GM (erken uyarı).
+- **Araçlar:** Python (pandas), xlsx, grafik üretimi, Bash.
+
+## Not — kapasite riski
+Bu ekip tek uzmanlı. Proje sayısı arttığında raporlama yükü darboğaz olabilir; o noktada GM, patrona **Doküman Uzmanı** işe alımını yeniden önerecektir.`
+    }
+  ]
+};
+/* === VERİ SONU === */
+
+/* ================= Yardımcılar ================= */
+const STATUSES = {
+  "çalışıyor": { cls: "calisiyor", label: "Çalışıyor" },
+  "boşta":     { cls: "bosta",     label: "Boşta" },
+  "beklemede": { cls: "beklemede", label: "Beklemede" },
+  "blokaj":    { cls: "blokaj",    label: "Blokaj" }
+};
+const TEAM_ORDER = ["Yönetim", "Yazılım", "E-Ticaret", "Araştırma", "Veri"];
+const TEAM_LABELS = {
+  "Yönetim": "🧑‍💼 Yönetim",
+  "Yazılım": "💻 Yazılım Ekibi",
+  "E-Ticaret": "🛒 E-Ticaret Ekibi",
+  "Araştırma": "🔬 Araştırma Ekibi",
+  "Veri": "📊 Veri & Raporlama Ekibi"
+};
+const STATUS_DOT_COLORS = {
+  "çalışıyor": "#4cd07d", "boşta": "#b9c2cc", "beklemede": "#f2c14e", "blokaj": "#ef6a5a"
+};
+
+let activeFilter = null; // null | durum adı
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+function countByStatus() {
+  const counts = { "çalışıyor": 0, "boşta": 0, "beklemede": 0, "blokaj": 0 };
+  DATA.agents.forEach(a => { if (counts[a.status] !== undefined) counts[a.status]++; });
+  return counts;
+}
+
+/* ================= Üst bar: sayaçlar ================= */
+function renderCounters() {
+  const counts = countByStatus();
+  const el = document.getElementById("counters");
+  el.innerHTML = Object.keys(STATUSES).map(st => {
+    const active = activeFilter === st ? " active" : "";
+    return '<span class="counter' + active + '" data-status="' + escapeHtml(st) + '" role="button" tabindex="0">' +
+      '<span class="dot" style="background:' + STATUS_DOT_COLORS[st] + '"></span>' +
+      escapeHtml(STATUSES[st].label) + ' <span class="num">' + counts[st] + '</span></span>';
+  }).join("");
+  el.querySelectorAll(".counter").forEach(c => {
+    c.addEventListener("click", () => toggleFilter(c.dataset.status));
+    c.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleFilter(c.dataset.status); } });
+  });
+}
+
+/* ================= Filtre ================= */
+function toggleFilter(status) {
+  activeFilter = (activeFilter === status) ? null : status;
+  switchTab("live"); // filtre canlı durum ekranında görülür
+  renderAll();
+}
+
+function renderFilterNote() {
+  const note = document.getElementById("filterNote");
+  const text = document.getElementById("filterNoteText");
+  if (activeFilter) {
+    note.classList.add("visible");
+    text.textContent = 'Filtre etkin: yalnızca "' + STATUSES[activeFilter].label + '" durumundaki ajanlar gösteriliyor.';
+  } else {
+    note.classList.remove("visible");
+    text.textContent = "";
+  }
+}
+
+/* ================= Canlı Durum ================= */
+function agentCardHtml(a) {
+  const st = STATUSES[a.status] || STATUSES["boşta"];
+  let taskHtml = "";
+  if (a.currentTask) {
+    taskHtml = '<div class="agent-task">' + escapeHtml(a.currentTask) +
+      (a.since ? '<span class="since">Başlangıç: ' + escapeHtml(a.since) + '</span>' : "") + '</div>';
+  }
+  return '<article class="agent-card">' +
+    '<div class="agent-top">' +
+      '<span class="agent-emoji">' + escapeHtml(a.emoji) + '</span>' +
+      '<div><div class="agent-name">' + escapeHtml(a.name) + '</div>' +
+      '<div class="agent-role">' + escapeHtml(a.role) + '</div></div>' +
+    '</div>' +
+    '<span class="badge ' + st.cls + '" data-status="' + escapeHtml(a.status) + '" title="Bu duruma göre filtrele">' +
+      '<span class="dot"></span>' + escapeHtml(st.label) + '</span>' +
+    taskHtml +
+  '</article>';
+}
+
+function renderTeams() {
+  const wrap = document.getElementById("teams");
+  let html = "";
+  TEAM_ORDER.forEach(team => {
+    const members = DATA.agents.filter(a => a.team === team);
+    if (!members.length) return;
+    const visible = activeFilter ? members.filter(a => a.status === activeFilter) : members;
+    if (activeFilter && !visible.length) return;
+    const working = members.filter(a => a.status === "çalışıyor").length;
+    html += '<section class="team-group">' +
+      '<div class="team-head"><h2>' + escapeHtml(TEAM_LABELS[team] || team) + '</h2>' +
+      '<span class="team-meta">' + members.length + ' ajan · ' + working + ' çalışıyor</span></div>' +
+      '<div class="agent-grid">' + visible.map(agentCardHtml).join("") + '</div>' +
+    '</section>';
+  });
+  if (!html) {
+    html = '<div class="empty-note">Bu durumda ajan yok.</div>';
+  }
+  wrap.innerHTML = html;
+  wrap.querySelectorAll(".badge").forEach(b => {
+    b.addEventListener("click", () => toggleFilter(b.dataset.status));
+  });
+}
+
+/* ================= Etkinlik Akışı ================= */
+function renderActivity() {
+  const list = document.getElementById("activityList");
+  const items = DATA.activity.slice().reverse(); // en yeni üstte
+  if (!items.length) {
+    list.innerHTML = '<div class="empty-note">Henüz kayıtlı etkinlik yok.</div>';
+    return;
+  }
+  list.innerHTML = items.map(ev =>
+    '<div class="activity-item">' +
+      '<div class="activity-rail"><span class="activity-dot"></span><span class="activity-line"></span></div>' +
+      '<div class="activity-body">' +
+        '<span class="activity-time">' + escapeHtml(ev.time) + '</span>' +
+        '<span class="activity-agent">' + escapeHtml(ev.agent) + '</span>' +
+        '<div class="activity-text">' + escapeHtml(ev.text) + '</div>' +
+      '</div>' +
+    '</div>'
+  ).join("");
+}
+
+/* ================= Mini Markdown Parser ================= */
+function mdInline(escaped) {
+  return escaped
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<span class="md-link">$1</span>');
+}
+
+function mdToHtml(md) {
+  const lines = String(md).replace(/\r\n/g, "\n").split("\n");
+  let html = "", inCode = false, codeBuf = [], listBuf = [], listTag = null;
+
+  function flushList() {
+    if (listBuf.length) {
+      html += "<" + listTag + ">" + listBuf.map(li => "<li>" + li + "</li>").join("") + "</" + listTag + ">";
+      listBuf = []; listTag = null;
+    }
+  }
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    if (trimmed.startsWith("```")) {
+      if (inCode) { html += "<pre><code>" + codeBuf.map(escapeHtml).join("\n") + "</code></pre>"; codeBuf = []; }
+      else { flushList(); }
+      inCode = !inCode;
+      continue;
+    }
+    if (inCode) { codeBuf.push(line); continue; }
+
+    if (trimmed === "") { flushList(); continue; }
+    if (/^---+$/.test(trimmed)) { flushList(); html += "<hr>"; continue; }
+
+    const h = trimmed.match(/^(#{1,3})\s+(.*)$/);
+    if (h) { flushList(); const lvl = h[1].length; html += "<h" + lvl + ">" + mdInline(escapeHtml(h[2])) + "</h" + lvl + ">"; continue; }
+
+    if (trimmed.startsWith("> ")) { flushList(); html += "<blockquote>" + mdInline(escapeHtml(trimmed.slice(2))) + "</blockquote>"; continue; }
+
+    const ul = trimmed.match(/^[-*]\s+(.*)$/);
+    if (ul) { if (listTag !== "ul") flushList(); listTag = "ul"; listBuf.push(mdInline(escapeHtml(ul[1]))); continue; }
+
+    const ol = trimmed.match(/^\d+[.)]\s+(.*)$/);
+    if (ol) { if (listTag !== "ol") flushList(); listTag = "ol"; listBuf.push(mdInline(escapeHtml(ol[1]))); continue; }
+
+    flushList();
+    html += "<p>" + mdInline(escapeHtml(trimmed)) + "</p>";
+  }
+  if (inCode && codeBuf.length) html += "<pre><code>" + codeBuf.map(escapeHtml).join("\n") + "</code></pre>";
+  flushList();
+  return html;
+}
+
+/* ================= Organizasyon Dosyaları ================= */
+function renderDocList() {
+  const list = document.getElementById("docList");
+  list.innerHTML = DATA.docs.map((d, i) =>
+    '<div class="doc-card" data-idx="' + i + '" role="button" tabindex="0">' +
+      '<span class="doc-emoji">' + escapeHtml(d.emoji) + '</span>' +
+      '<span class="doc-title">' + escapeHtml(d.title) + '</span>' +
+    '</div>'
+  ).join("");
+  list.querySelectorAll(".doc-card").forEach(card => {
+    card.addEventListener("click", () => openDoc(+card.dataset.idx));
+    card.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openDoc(+card.dataset.idx); } });
+  });
+}
+
+function openDoc(idx) {
+  const doc = DATA.docs[idx];
+  if (!doc) return;
+  document.getElementById("docList").style.display = "none";
+  const view = document.getElementById("docView");
+  view.classList.add("visible");
+  document.getElementById("docContent").innerHTML = mdToHtml(doc.content);
+  view.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function closeDoc() {
+  document.getElementById("docView").classList.remove("visible");
+  document.getElementById("docList").style.display = "";
+}
+
+/* ================= Sekmeler ================= */
+function switchTab(tabId) {
+  document.querySelectorAll(".tab-btn").forEach(b =>
+    b.classList.toggle("active", b.dataset.tab === tabId));
+  document.querySelectorAll(".panel").forEach(p =>
+    p.classList.toggle("active", p.id === "panel-" + tabId));
+}
+
+/* ================= Başlatma ================= */
+function renderAll() {
+  document.getElementById("updatedAt").textContent = DATA.updated;
+  renderCounters();
+  renderFilterNote();
+  renderTeams();
+  renderActivity();
+  renderDocList();
+}
+
+document.getElementById("tabs").addEventListener("click", e => {
+  const btn = e.target.closest(".tab-btn");
+  if (btn) switchTab(btn.dataset.tab);
+});
+document.getElementById("clearFilterBtn").addEventListener("click", () => { activeFilter = null; renderAll(); });
+document.getElementById("docBackBtn").addEventListener("click", closeDoc);
+
+renderAll();
+</script>
+</body>
+</html>
