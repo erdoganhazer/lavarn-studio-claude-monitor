@@ -1,10 +1,10 @@
 {
-  "updated": "31 Temmuz 2026, 00:44",
+  "updated": "31 Temmuz 2026, 00:58",
   "agents": {
     "gm": {
-      "status": "çalışıyor",
-      "currentTask": "Metronom uygulaması pazar araştırması — fırsat analizi ve rapor",
-      "since": "31 Temmuz 2026, 00:10"
+      "status": "onay bekliyor",
+      "currentTask": "Metronom raporu teslim edildi — 5 karar patron onayında",
+      "since": "31 Temmuz 2026, 00:58"
     },
     "yz-lider": {
       "status": "boşta",
@@ -162,6 +162,11 @@
       "time": "31 Temmuz 2026, 00:44",
       "agent": "Genel Müdür",
       "text": "Fırsat analizi ve kapsamlı Word raporu hazırlanıyor; ardından patron kararına sunulacak."
+    },
+    {
+      "time": "31 Temmuz 2026, 00:58",
+      "agent": "Veri & Raporlama Lideri",
+      "text": "13 bölümlük Word raporu tamamlandı (projeler/metronom/). GM panosu güncellendi: 1 proje, 5 görev, 3 rapor, 5 onay bekleyen karar."
     }
   ]
 }
