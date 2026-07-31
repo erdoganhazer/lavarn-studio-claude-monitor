@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lavarn Studio HQ</title>
+<style>
+:root{
+  --primary:#2f6fed; --primary-dark:#1e4fc2; --primary-light:#e8effd;
+  --bg:#f0f4f9; --card:#fff; --border:#e2e8f0; --text:#1a2433; --muted:#64748b;
+  --green:#4cd07d; --green-bg:#e9f9f0; --yellow:#f5b93e; --yellow-bg:#fdf6e5;
+  --gray:#9aa5af; --gray-bg:#eef1f4; --red:#e5484d; --red-bg:#fdecec;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+header{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;padding:28px 24px}
+.hwrap{max-width:1060px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+h1{font-size:1.5rem;letter-spacing:.3px}
+h1 span{opacity:.75;font-weight:400}
+.hmeta{font-size:.85rem;background:rgba(255,255,255,.13);padding:6px 14px;border-radius:20px}
+main{max-width:1060px;margin:0 auto;padding:24px 16px 48px}
+h2{font-size:1.05rem;margin:28px 0 12px;color:var(--primary-dark)}
+.grid{display:grid;gap:14px}
+.g4{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px}
+.card h3{font-size:.98rem;margin-bottom:6px}
+.card .sub{color:var(--muted);font-size:.85rem;line-height:1.5}
+.badge{display:inline-block;font-size:.72rem;font-weight:600;padding:3px 10px;border-radius:12px;margin-bottom:8px}
+.b-green{background:var(--green-bg);color:#1d8a4a}
+.b-yellow{background:var(--yellow-bg);color:#9a6d0c}
+.b-gray{background:var(--gray-bg);color:#5c6670}
+.b-blue{background:var(--primary-light);color:var(--primary-dark)}
+.lead{font-size:.8rem;color:var(--muted);margin-top:8px}
+.stat{display:flex;align-items:baseline;gap:8px}
+.stat b{font-size:1.7rem;color:var(--primary-dark)}
+ul.clean{list-style:none;margin-top:8px}
+ul.clean li{font-size:.85rem;color:var(--muted);padding:4px 0;border-top:1px dashed var(--border)}
+a.btn{display:inline-block;margin-top:10px;font-size:.85rem;color:var(--primary-dark);text-decoration:none;font-weight:600}
+a.btn:hover{text-decoration:underline}
+footer{text-align:center;color:var(--muted);font-size:.78rem;padding:20px}
+#live{font-weight:600}
+</style>
+</head>
+<body>
+<header>
+  <div class="hwrap">
+    <h1>🏢 Lavarn Studio <span>| HQ</span></h1>
+    <div class="hmeta">Son güncelleme: <span id="live">—</span></div>
+  </div>
+</header>
+<main>
+  <h2>Genel Bakış</h2>
+  <div class="grid g4">
+    <div class="card"><div class="stat"><b>4</b> ekip lideri</div><div class="sub">Yazılım · E-Ticaret · Araştırma · Veri</div></div>
+    <div class="card"><div class="stat"><b>15</b> uzman</div><div class="sub">Proje bazında göreve çağrılır</div></div>
+    <div class="card"><div class="stat"><b>3</b> aktif proje</div><div class="sub">Metronom · YouTube · Pasif Gelir</div></div>
+    <div class="card"><div class="stat"><b id="activeCount">—</b> çalışan ajan</div><div class="sub">Canlı veriden (log.json)</div></div>
+  </div>
+
+  <h2>Organizasyon</h2>
+  <div class="grid g4">
+    <div class="card"><span class="badge b-blue">💻 Yazılım</span><h3>Emre Aksoy</h3><div class="sub">Godot, Android, iOS, Web geliştirme</div><div class="lead">8 uzman</div></div>
+    <div class="card"><span class="badge b-blue">🛒 E-Ticaret</span><h3>Selin Demir</h3><div class="sub">Shopify, pazaryerleri, entegrasyonlar</div><div class="lead">4 uzman</div></div>
+    <div class="card"><span class="badge b-blue">🔬 Araştırma</span><h3>Mert Kaya</h3><div class="sub">Pazar, rakip, teknik araştırma, fizibilite</div><div class="lead">2 uzman</div></div>
+    <div class="card"><span class="badge b-blue">📊 Veri & Raporlama</span><h3>Zeynep Arslan</h3><div class="sub">Metrik, analiz, doküman üretimi</div><div class="lead">1 uzman</div></div>
+  </div>
+
+  <h2>Proje Portföyü</h2>
+  <div class="grid g3">
+    <div class="card">
+      <span class="badge b-yellow">Patron onayında</span>
+      <h3>🎵 Metronom Uygulaması</h3>
+      <div class="sub">Godot ile mobil metronom. Pazar araştırması ve rapor v2 teslim edildi; 6 kritik karar onay bekliyor.</div>
+      <ul class="clean"><li>Pazar Araştırması Raporu (docx)</li></ul>
+    </div>
+    <div class="card">
+      <span class="badge b-yellow">Pilot önerisi onayda</span>
+      <h3>▶️ YouTube Stratejisi</h3>
+      <div class="sub">AI destekli YouTube pasif gelir modeli. Fizibilite tamam; 3 aylık hibrit pilot önerildi.</div>
+      <ul class="clean"><li>Fizibilite Raporu (docx)</li><li>12 Aylık Gelir Modeli (xlsx)</li></ul>
+    </div>
+    <div class="card">
+      <span class="badge b-green">Rapor teslim edildi</span>
+      <h3>💰 Pasif Gelir Araştırması</h3>
+      <div class="sub">Pasif gelir seçenekleri konsolide edildi; ekip liderlerinin görüşleriyle raporlandı.</div>
+      <ul class="clean"><li>Konsolide Rapor (docx)</li><li>Lider görüşleri (Emre, Selin)</li></ul>
+    </div>
+  </div>
+
+  <h2>Canlı Takip</h2>
+  <div class="card">
+    <h3>📡 Operasyon Monitörü</h3>
+    <div class="sub">Ajanların anlık durumu ve hareket günlüğü ayrı sayfada 30 saniyede bir güncellenir.</div>
+    <a class="btn" href="../">Monitörü aç →</a>
+  </div>
+</main>
+<footer>Lavarn Studio · Founder: Hazer · Genel Müdür: Claude</footer>
+<script>
+fetch('../log.json?t='+Date.now()).then(r=>r.json()).then(d=>{
+  document.getElementById('live').textContent=d.updated||'—';
+  const n=Object.values(d.agents||{}).filter(a=>a.status&&a.status!=='boşta').length;
+  document.getElementById('activeCount').textContent=n;
+}).catch(()=>{document.getElementById('live').textContent='çevrimdışı';});
+setInterval(()=>location.reload(),120000);
+</script>
+</body>
+</html>
