@@ -1,0 +1,66 @@
+{
+  "updated": "2026-07-31T12:11:04+03:00",
+  "skills": [],
+  "gm": {
+    "status": "bekliyor",
+    "task": ""
+  },
+  "leaders": [
+    {
+      "id": "yazilim",
+      "status": "bekliyor",
+      "task": "",
+      "teams": [
+        { "name": "Kaan Demirel — Godot Geliştirici", "status": "bekliyor", "task": "Godot ile 2D/3D oyun geliştirme, GDScript/C#, performans ve platform export süreçleri" },
+        { "name": "Arda Yıldız — Android Geliştirici", "status": "bekliyor", "task": "Kotlin/Jetpack Compose ile native Android geliştirme ve Play Store süreçleri" },
+        { "name": "Deniz Koçak — iOS Geliştirici", "status": "bekliyor", "task": "Swift/SwiftUI ile native iOS geliştirme, App Store ve TestFlight süreçleri" },
+        { "name": "Baran Öztürk — Backend Geliştirici", "status": "bekliyor", "task": "Node.js/Python ile API tasarımı, PostgreSQL, auth ve sunucu tarafı iş mantığı" },
+        { "name": "Elif Şahin — Frontend Geliştirici", "status": "bekliyor", "task": "React/Next.js ile web arayüzleri, PWA ve istemci tarafı performans" },
+        { "name": "Yağmur Çelik — QA/Test Uzmanı", "status": "bekliyor", "task": "Tüm platformlarda test otomasyonu ve kabul kriteri doğrulaması" },
+        { "name": "Onur Aydın — DevOps Uzmanı", "status": "bekliyor", "task": "CI/CD, Docker, deploy, ortam yönetimi ve secret güvenliği" }
+      ]
+    },
+    {
+      "id": "eticaret",
+      "status": "bekliyor",
+      "task": "",
+      "teams": [
+        { "name": "Melis Kurt — Pazaryeri Uzmanı", "status": "bekliyor", "task": "Trendyol, Hepsiburada, Amazon ve n11 mağaza operasyonları, buybox ve puan yönetimi" },
+        { "name": "Zehra Aksu — Listeleme & SEO Uzmanı", "status": "bekliyor", "task": "Ürün listelemelerini başlık, görsel ve anahtar kelime yönünden optimize eder" },
+        { "name": "Burak Yıldız — Entegrasyon Uzmanı", "status": "bekliyor", "task": "Kargo, ödeme, ERP ve entegratör bağlantıları; stok/sipariş senkronizasyonu" },
+        { "name": "Aylin Öztürk — Reklam & Büyüme Uzmanı", "status": "bekliyor", "task": "Sponsored products, Meta/Google Ads, CRO ve e-posta otomasyonları" },
+        { "name": "Cem Aydın — Operasyon & Müşteri Deneyimi Uzmanı", "status": "bekliyor", "task": "Sipariş akışı, iadeler, müşteri yorumları ve kampanya takvimi" }
+      ]
+    },
+    {
+      "id": "arastirma",
+      "status": "bekliyor",
+      "task": "",
+      "teams": [
+        { "name": "Elif Sancak — Pazar Analisti", "status": "bekliyor", "task": "YouTube faceless, AI müzik ve stok ses senaryolarını kaynaklı raporladı" },
+        { "name": "Deniz Yalçın — Rakip Analisti", "status": "bekliyor", "task": "Stok görsel, POD ve dijital şablon senaryolarını kaynaklı raporladı" },
+        { "name": "Tolga Ersoy — Teknik Araştırmacı", "status": "bekliyor", "task": "KDP, blog/SEO, online kurs ve mikro-SaaS senaryolarını kaynaklı raporladı" },
+        { "name": "Nazlı Erdem — Regülasyon Araştırmacısı", "status": "bekliyor", "task": "Türkiye ödeme kanalları (Payoneer/Wise/MoR) ve vergi notunu raporladı" }
+      ]
+    },
+    {
+      "id": "veri",
+      "status": "bekliyor",
+      "task": "",
+      "teams": [
+        { "name": "Elif Kaya — Veri Analisti", "status": "bekliyor", "task": "Python (pandas) ile trend, kohort ve segmentasyon analizleri" },
+        { "name": "Deniz Yıldırım — Rapor & Doküman Uzmanı", "status": "bekliyor", "task": "Konsolide docx raporu yazıyor" },
+        { "name": "Umut Şen — Görselleştirme Uzmanı", "status": "bekliyor", "task": "KPI panoları ve yönetim sunumu görsellerini sade ve okunur tasarlar" },
+        { "name": "Seda Korkmaz — Veri Kalitesi & KPI Uzmanı", "status": "bekliyor", "task": "Veri tutarlılığı çapraz kontrolü, metrik tanımları ve hedef eşikleri" }
+      ]
+    }
+  ],
+  "events": [
+    { "ts": "2026-07-31T12:04:40+03:00", "actor": "Emre Aksoy", "msg": "Teknik fizibilite görüşünü teslim etti (ilk 3: şablon, mikro-SaaS, KDP)" },
+    { "ts": "2026-07-31T12:04:40+03:00", "actor": "Selin Demir", "msg": "Monetizasyon görüşünü teslim etti (ilk 3: şablon, kurs, KDP)" },
+    { "ts": "2026-07-31T12:04:40+03:00", "actor": "Zeynep Arslan", "msg": "Konsolide hiyerarşik raporu (docx) hazırlıyor" },
+    { "ts": "2026-07-31T12:11:04+03:00", "actor": "Zeynep Arslan", "msg": "9 sayfalık konsolide raporu teslim etti" },
+    { "ts": "2026-07-31T12:11:04+03:00", "actor": "Barış Tekin", "msg": "Pasif gelir fizibilite raporunu patrona sundu; 10 karar maddesi onay bekliyor" },
+    { "ts": "2026-07-31T13:05:00+03:00", "actor": "Barış Tekin", "msg": "HQ paneli web'e taşındı — ortak erişimi için GitHub Pages'te yayında" }
+  ]
+}

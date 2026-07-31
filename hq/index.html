@@ -5,104 +5,349 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lavarn Studio HQ</title>
 <style>
-:root{
-  --primary:#2f6fed; --primary-dark:#1e4fc2; --primary-light:#e8effd;
-  --bg:#f0f4f9; --card:#fff; --border:#e2e8f0; --text:#1a2433; --muted:#64748b;
-  --green:#4cd07d; --green-bg:#e9f9f0; --yellow:#f5b93e; --yellow-bg:#fdf6e5;
-  --gray:#9aa5af; --gray-bg:#eef1f4; --red:#e5484d; --red-bg:#fdecec;
+:root { color-scheme: light; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:-apple-system,'Segoe UI',Lato,system-ui,sans-serif;
+  background:#f4f0ec; min-height:100vh; color:#1d1c1d; padding:12px 8px 24px;
 }
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-header{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;padding:28px 24px}
-.hwrap{max-width:1060px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-h1{font-size:1.5rem;letter-spacing:.3px}
-h1 span{opacity:.75;font-weight:400}
-.hmeta{font-size:.85rem;background:rgba(255,255,255,.13);padding:6px 14px;border-radius:20px}
-main{max-width:1060px;margin:0 auto;padding:24px 16px 48px}
-h2{font-size:1.05rem;margin:28px 0 12px;color:var(--primary-dark)}
-.grid{display:grid;gap:14px}
-.g4{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
-.g3{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px}
-.card h3{font-size:.98rem;margin-bottom:6px}
-.card .sub{color:var(--muted);font-size:.85rem;line-height:1.5}
-.badge{display:inline-block;font-size:.72rem;font-weight:600;padding:3px 10px;border-radius:12px;margin-bottom:8px}
-.b-green{background:var(--green-bg);color:#1d8a4a}
-.b-yellow{background:var(--yellow-bg);color:#9a6d0c}
-.b-gray{background:var(--gray-bg);color:#5c6670}
-.b-blue{background:var(--primary-light);color:var(--primary-dark)}
-.lead{font-size:.8rem;color:var(--muted);margin-top:8px}
-.stat{display:flex;align-items:baseline;gap:8px}
-.stat b{font-size:1.7rem;color:var(--primary-dark)}
-ul.clean{list-style:none;margin-top:8px}
-ul.clean li{font-size:.85rem;color:var(--muted);padding:4px 0;border-top:1px dashed var(--border)}
-a.btn{display:inline-block;margin-top:10px;font-size:.85rem;color:var(--primary-dark);text-decoration:none;font-weight:600}
-a.btn:hover{text-decoration:underline}
-footer{text-align:center;color:var(--muted);font-size:.78rem;padding:20px}
-#live{font-weight:600}
+.app { max-width:600px; margin:0 auto; background:#fff; border-radius:10px;
+  overflow:hidden; box-shadow:0 4px 18px rgba(0,0,0,.18); border:1px solid #d9d3cd; }
+
+/* ---- Slack üst bar ---- */
+.topbar { background:#4A154B; color:#fff; padding:10px 14px;
+  display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.tb-title { font-weight:900; font-size:15px; letter-spacing:.2px; display:flex; align-items:center; gap:7px; }
+.tb-title .ws { width:24px; height:24px; border-radius:6px; background:#ECB22E; color:#4A154B;
+  display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; }
+.tb-info { text-align:right; font-size:10px; color:#e0cfe1; line-height:1.5; }
+.tb-info b { color:#fff; font-weight:700; }
+.livedot { display:inline-block; width:7px; height:7px; border-radius:50%; background:#2BAC76; margin-right:4px; animation:blink 1.6s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.25} }
+
+/* ---- kanal başlığı ---- */
+.chan { padding:8px 14px; border-bottom:1px solid #e8e8e8; font-size:12.5px; color:#616061;
+  display:flex; align-items:center; gap:6px; }
+.chan b { color:#1d1c1d; }
+
+/* ---- aktif skill / huddle şeridi ---- */
+#skillsbar { display:none; flex-wrap:wrap; gap:6px; padding:8px 14px; border-bottom:1px solid #e8e8e8; background:#F8F5FA; }
+#skillsbar.on { display:flex; align-items:center; }
+.sbtitle { font-size:10px; font-weight:800; color:#4A154B; letter-spacing:.4px; margin-right:2px; }
+.skillchip { display:flex; align-items:center; gap:6px; background:#fff; border:1px solid #d9c8dc;
+  border-radius:16px; padding:3px 10px; font-size:11px; color:#4A154B; font-weight:700;
+  animation:chipglow 1.8s ease-in-out infinite; }
+@keyframes chipglow { 0%,100%{box-shadow:0 0 0 0 rgba(74,21,75,.30);} 50%{box-shadow:0 0 0 6px rgba(74,21,75,0);} }
+.gear { display:inline-block; animation:rot 1.4s linear infinite; font-size:11px; }
+.skillchip small { color:#8a6a8d; font-weight:500; }
+@keyframes rot { to { transform:rotate(360deg); } }
+
+/* ---- organizasyon ağacı ---- */
+#tree { position:relative; padding:16px 10px 10px; }
+#wires { position:absolute; inset:0; pointer-events:none; z-index:0; }
+.row-gm { display:flex; justify-content:center; margin-bottom:46px; position:relative; z-index:1; }
+.row-leaders { display:flex; justify-content:center; gap:9px; position:relative; z-index:1; }
+
+.card { background:#fff; border:1px solid #dddddd; border-radius:9px;
+  padding:8px 5px 7px; text-align:center; cursor:pointer;
+  width:106px; flex:0 1 106px; min-width:80px; position:relative;
+  transition:box-shadow .15s, border-color .15s, transform .15s; }
+.card:hover { transform:translateY(-1px); box-shadow:0 2px 8px rgba(0,0,0,.10); }
+.card.selected { border-color:#4A154B; box-shadow:0 0 0 2.5px rgba(74,21,75,.25); }
+.card.gm { width:132px; flex:0 0 132px; }
+.card.working { border-color:#2BAC76; animation:workglow 1.6s ease-in-out infinite; }
+@keyframes workglow {
+  0%,100% { box-shadow:0 0 0 0 rgba(43,172,118,.5); }
+  50%      { box-shadow:0 0 0 8px rgba(43,172,118,0); }
+}
+.card.blocked { border-color:#E01E5A; }
+
+.avatar { width:44px; height:44px; border-radius:8px; margin:0 auto 5px;
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-weight:800; font-size:15px; position:relative; }
+.card.gm .avatar { width:54px; height:54px; font-size:18px; }
+.statdot { position:absolute; right:-4px; bottom:-4px; width:12px; height:12px;
+  border-radius:50%; border:2.5px solid #fff; background:#fff; box-shadow:inset 0 0 0 1.6px #8f8f8f; }
+.statdot.calisiyor { background:#2BAC76; box-shadow:none; animation:blink 1.2s infinite; }
+.statdot.blokaj { background:#E01E5A; box-shadow:none; }
+.statdot.tamamlandi { background:#36C5F0; box-shadow:none; }
+.cname { font-size:11.5px; font-weight:800; line-height:1.15; }
+.crole { font-size:9.5px; color:#616061; margin-top:2px; line-height:1.15; }
+.spin { display:inline-block; width:9px; height:9px; border-radius:50%;
+  border:2px solid #2BAC76; border-top-color:transparent;
+  animation:rot .8s linear infinite; vertical-align:-1px; margin-right:3px; }
+.workchip { font-size:9px; color:#2BAC76; font-weight:700; margin-top:3px; }
+
+path.wire { fill:none; stroke:#c9bfd0; stroke-width:2; }
+path.wire.active { stroke:#2BAC76; stroke-width:2.5; stroke-dasharray:6 6; animation:flow 1s linear infinite; }
+@keyframes flow { to { stroke-dashoffset:-12; } }
+
+/* ---- detay (thread paneli) ---- */
+#detail { margin:6px 14px 12px; background:#fff; border:1px solid #e0e0e0; border-left:4px solid #4A154B;
+  border-radius:8px; padding:11px 12px; display:none; }
+#detail.open { display:block; animation:pop .18s ease-out; }
+@keyframes pop { from { opacity:0; transform:translateY(5px);} to { opacity:1; transform:none; } }
+.dhead { display:flex; align-items:center; gap:10px; padding-bottom:8px; border-bottom:1px solid #eee; margin-bottom:8px; }
+.dhead .avatar { margin:0; width:38px; height:38px; font-size:13px; }
+.dtitle { font-size:13px; font-weight:800; }
+.dsub { font-size:10.5px; color:#616061; }
+.dtask { font-size:11px; color:#454245; margin:2px 0 9px; font-style:italic; }
+.dlabel { font-size:9.5px; font-weight:800; color:#616061; letter-spacing:.5px; margin-bottom:6px; }
+.member { display:flex; align-items:center; gap:8px; padding:6px 8px; border-radius:7px; margin-bottom:4px;
+  background:#fafafa; border:1px solid #ececec; }
+.member.calisiyor { border-color:#bfe6d3; background:linear-gradient(90deg,#f2fbf6,#e4f6ec 50%,#f2fbf6);
+  background-size:200% 100%; animation:shimmer 2.2s linear infinite; }
+@keyframes shimmer { to { background-position:-200% 0; } }
+.member .mname { font-size:11.5px; font-weight:700; flex:1; }
+.member .mtask { font-size:10px; color:#616061; flex:2; }
+.chip { font-size:9px; font-weight:800; padding:2.5px 8px; border-radius:12px; white-space:nowrap; }
+.chip.calisiyor { background:#d9f2e6; color:#1b7a52; }
+.chip.bekliyor { background:#ececec; color:#616061; }
+.chip.blokaj { background:#fbdae4; color:#B31245; }
+.chip.tamamlandi { background:#d7f0fa; color:#0b7da3; }
+.empty { text-align:center; font-size:11px; color:#9a9a9a; padding:10px 0; }
+
+/* ---- son olaylar ---- */
+#events { border-top:1px solid #e8e8e8; }
+.ev-head { padding:8px 14px 4px; font-size:12px; color:#616061; display:flex; justify-content:space-between; align-items:center; }
+.ev-head b { color:#1d1c1d; }
+.ev-list { padding:2px 10px 12px; }
+.ev { display:flex; gap:9px; padding:6px 6px; border-radius:7px; align-items:flex-start; }
+.ev:hover { background:#f8f8f8; }
+.ev.new { animation:evpop .3s ease-out; }
+@keyframes evpop { from { opacity:0; transform:translateX(-6px);} to { opacity:1; transform:none; } }
+.ev-av { width:30px; height:30px; border-radius:6px; flex:0 0 30px;
+  display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:11px; }
+.ev-body { flex:1; min-width:0; }
+.ev-top { display:flex; align-items:baseline; gap:7px; }
+.ev-name { font-size:12px; font-weight:800; }
+.ev-time { font-size:9.5px; color:#9a9a9a; }
+.ev-msg { font-size:12px; color:#454245; line-height:1.35; }
+.ev-msg .doing { color:#2BAC76; font-weight:600; }
+.legend { display:flex; justify-content:center; gap:12px; padding:8px 0 12px; font-size:9.5px; color:#616061; flex-wrap:wrap; }
+.legend span { display:flex; align-items:center; gap:4px; }
+.ldot { width:8px; height:8px; border-radius:50%; }
+.foot { text-align:center; font-size:10px; color:#9a9a9a; padding:10px 0 2px; }
+.foot a { color:#4A154B; font-weight:700; text-decoration:none; }
+.foot a:hover { text-decoration:underline; }
 </style>
 </head>
 <body>
-<header>
-  <div class="hwrap">
-    <h1>🏢 Lavarn Studio <span>| HQ</span></h1>
-    <div class="hmeta">Son güncelleme: <span id="live">—</span></div>
-  </div>
-</header>
-<main>
-  <h2>Genel Bakış</h2>
-  <div class="grid g4">
-    <div class="card"><div class="stat"><b>4</b> ekip lideri</div><div class="sub">Yazılım · E-Ticaret · Araştırma · Veri</div></div>
-    <div class="card"><div class="stat"><b>15</b> uzman</div><div class="sub">Proje bazında göreve çağrılır</div></div>
-    <div class="card"><div class="stat"><b>3</b> aktif proje</div><div class="sub">Metronom · YouTube · Pasif Gelir</div></div>
-    <div class="card"><div class="stat"><b id="activeCount">—</b> çalışan ajan</div><div class="sub">Canlı veriden (log.json)</div></div>
-  </div>
-
-  <h2>Organizasyon</h2>
-  <div class="grid g4">
-    <div class="card"><span class="badge b-blue">💻 Yazılım</span><h3>Emre Aksoy</h3><div class="sub">Godot, Android, iOS, Web geliştirme</div><div class="lead">8 uzman</div></div>
-    <div class="card"><span class="badge b-blue">🛒 E-Ticaret</span><h3>Selin Demir</h3><div class="sub">Shopify, pazaryerleri, entegrasyonlar</div><div class="lead">4 uzman</div></div>
-    <div class="card"><span class="badge b-blue">🔬 Araştırma</span><h3>Mert Kaya</h3><div class="sub">Pazar, rakip, teknik araştırma, fizibilite</div><div class="lead">2 uzman</div></div>
-    <div class="card"><span class="badge b-blue">📊 Veri & Raporlama</span><h3>Zeynep Arslan</h3><div class="sub">Metrik, analiz, doküman üretimi</div><div class="lead">1 uzman</div></div>
-  </div>
-
-  <h2>Proje Portföyü</h2>
-  <div class="grid g3">
-    <div class="card">
-      <span class="badge b-yellow">Patron onayında</span>
-      <h3>🎵 Metronom Uygulaması</h3>
-      <div class="sub">Godot ile mobil metronom. Pazar araştırması ve rapor v2 teslim edildi; 6 kritik karar onay bekliyor.</div>
-      <ul class="clean"><li>Pazar Araştırması Raporu (docx)</li></ul>
-    </div>
-    <div class="card">
-      <span class="badge b-yellow">Pilot önerisi onayda</span>
-      <h3>▶️ YouTube Stratejisi</h3>
-      <div class="sub">AI destekli YouTube pasif gelir modeli. Fizibilite tamam; 3 aylık hibrit pilot önerildi.</div>
-      <ul class="clean"><li>Fizibilite Raporu (docx)</li><li>12 Aylık Gelir Modeli (xlsx)</li></ul>
-    </div>
-    <div class="card">
-      <span class="badge b-green">Rapor teslim edildi</span>
-      <h3>💰 Pasif Gelir Araştırması</h3>
-      <div class="sub">Pasif gelir seçenekleri konsolide edildi; ekip liderlerinin görüşleriyle raporlandı.</div>
-      <ul class="clean"><li>Konsolide Rapor (docx)</li><li>Lider görüşleri (Emre, Selin)</li></ul>
+<div class="app">
+  <div class="topbar">
+    <div class="tb-title"><div class="ws">L</div>Lavarn Studio HQ</div>
+    <div class="tb-info">
+      <div><span class="livedot"></span><b>CANLI</b> · yenileme: <b id="refsec">30 sn</b></div>
+      <div>son veri: <b id="updated">—</b></div>
     </div>
   </div>
 
-  <h2>Canlı Takip</h2>
-  <div class="card">
-    <h3>📡 Operasyon Monitörü</h3>
-    <div class="sub">Ajanların anlık durumu ve hareket günlüğü ayrı sayfada 30 saniyede bir güncellenir.</div>
-    <a class="btn" href="../">Monitörü aç →</a>
+  <div class="chan"><b>#organizasyon</b><span>· Genel Müdür ve ekip liderleri · kartlara tıklayın</span></div>
+
+  <div id="skillsbar"></div>
+
+  <div id="tree">
+    <svg id="wires"></svg>
+    <div class="row-gm"><div class="card gm" id="card-gm"></div></div>
+    <div class="row-leaders" id="leaderRow"></div>
   </div>
-</main>
-<footer>Lavarn Studio · Founder: Hazer · Genel Müdür: Claude</footer>
+
+  <div id="detail"></div>
+
+  <div id="events">
+    <div class="ev-head"><span><b>#son-olaylar</b> · son 5</span><span id="evcount"></span></div>
+    <div class="ev-list" id="evList"></div>
+  </div>
+
+  <div class="legend">
+    <span><span class="ldot" style="background:#2BAC76"></span>Çalışıyor</span>
+    <span><span class="ldot" style="background:#8f8f8f"></span>Bekliyor</span>
+    <span><span class="ldot" style="background:#36C5F0"></span>Tamamlandı</span>
+    <span><span class="ldot" style="background:#E01E5A"></span>Blokaj</span>
+  </div>
+
+  <div class="foot"><a href="../">📡 Operasyon Monitörü →</a> · Lavarn Studio · Founder: Hazer</div>
+</div>
+
 <script>
-fetch('../log.json?t='+Date.now()).then(r=>r.json()).then(d=>{
-  document.getElementById('live').textContent=d.updated||'—';
-  const n=Object.values(d.agents||{}).filter(a=>a.status&&a.status!=='boşta').length;
-  document.getElementById('activeCount').textContent=n;
-}).catch(()=>{document.getElementById('live').textContent='çevrimdışı';});
-setInterval(()=>location.reload(),120000);
+const PEOPLE = {
+  gm:        { name:"Barış Tekin",   role:"Genel Müdür",              color:"#4A154B" },
+  yazilim:   { name:"Emre Aksoy",    role:"Yazılım Lideri",           color:"#1264A3" },
+  eticaret:  { name:"Selin Demir",   role:"E-Ticaret Lideri",         color:"#E8912D" },
+  arastirma: { name:"Mert Kaya",     role:"Araştırma Lideri",         color:"#2BAC76" },
+  veri:      { name:"Zeynep Arslan", role:"Veri & Raporlama Lideri",  color:"#E01E5A" }
+};
+const STATUS_TR = { calisiyor:"Çalışıyor", bekliyor:"Bekliyor", blokaj:"Blokaj", tamamlandi:"Tamamlandı" };
+const REFRESH_SEC = 30;
+let data = null;
+
+function initials(n){ return n.split(' ').map(w=>w[0]).join('').toUpperCase(); }
+function colorFor(name){
+  for (const k in PEOPLE) if (PEOPLE[k].name === name) return PEOPLE[k].color;
+  return "#611f69";
+}
+function fmtTime(iso){
+  try { return new Date(iso).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}); }
+  catch(e){ return iso; }
+}
+
+function cardHTML(key, st){
+  const p = PEOPLE[key];
+  const working = st.status === 'calisiyor';
+  return `
+    <div class="avatar" style="background:${p.color}">${initials(p.name)}
+      <div class="statdot ${st.status}"></div>
+    </div>
+    <div class="cname">${p.name}</div>
+    <div class="crole">${p.role}</div>
+    ${working ? '<div class="workchip"><span class="spin"></span>çalışıyor</div>' : ''}`;
+}
+
+function render(){
+  if (!data) return;
+  document.getElementById('updated').textContent = fmtTime(data.updated);
+  document.getElementById('refsec').textContent = REFRESH_SEC + ' sn';
+
+  /* aktif skill şeridi */
+  const bar = document.getElementById('skillsbar');
+  const skills = data.skills || [];
+  if (skills.length){
+    bar.className = 'on';
+    bar.innerHTML = `<span class="sbtitle">AKTİF SKILL:</span>` + skills.map(s=>`
+      <div class="skillchip"><span class="gear">⚙</span>${s.name}
+        ${s.by ? `<small>· ${s.by}</small>` : ''}${s.task ? `<small>· ${s.task}</small>` : ''}</div>`).join('');
+  } else { bar.className = ''; bar.innerHTML = ''; }
+
+  /* ağaç */
+  const gmCard = document.getElementById('card-gm');
+  gmCard.className = 'card gm' + (data.gm.status==='calisiyor'?' working':'') + (data.gm.status==='blokaj'?' blocked':'');
+  gmCard.innerHTML = cardHTML('gm', data.gm);
+  gmCard.onclick = () => select('gm');
+
+  const row = document.getElementById('leaderRow');
+  row.innerHTML = '';
+  data.leaders.forEach(l=>{
+    const c = document.createElement('div');
+    c.className = 'card' + (l.status==='calisiyor'?' working':'') + (l.status==='blokaj'?' blocked':'');
+    c.id = 'card-' + l.id;
+    c.innerHTML = cardHTML(l.id, l);
+    c.onclick = () => select(l.id);
+    row.appendChild(c);
+  });
+
+  /* son 5 olay */
+  const evs = (data.events || []).slice(-5);
+  document.getElementById('evcount').textContent = (data.events||[]).length + ' olay';
+  document.getElementById('evList').innerHTML = evs.length
+    ? evs.map(e=>`
+      <div class="ev new">
+        <div class="ev-av" style="background:${colorFor(e.actor)}">${initials(e.actor)}</div>
+        <div class="ev-body">
+          <div class="ev-top"><span class="ev-name">${e.actor}</span><span class="ev-time">${fmtTime(e.ts)}</span></div>
+          <div class="ev-msg">${e.msg}</div>
+        </div>
+      </div>`).join('')
+    : '<div class="empty">Henüz olay yok</div>';
+
+  const sel = localStorage.getItem('lavarn-hq-sel');
+  if (sel) showDetail(sel); else hideDetail();
+  requestAnimationFrame(drawWires);
+}
+
+function select(id){
+  const cur = localStorage.getItem('lavarn-hq-sel');
+  if (cur === id){ localStorage.removeItem('lavarn-hq-sel'); hideDetail(); }
+  else { localStorage.setItem('lavarn-hq-sel', id); showDetail(id); }
+}
+
+function hideDetail(){
+  const box = document.getElementById('detail');
+  box.className = ''; box.style.display = 'none';
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));
+}
+
+function showDetail(id){
+  const box = document.getElementById('detail');
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));
+  const card = document.getElementById(id==='gm' ? 'card-gm' : 'card-' + id);
+  if (!card) { hideDetail(); return; }
+  card.classList.add('selected');
+
+  const p = PEOPLE[id];
+  let st, task, members, label;
+  if (id === 'gm'){
+    st = data.gm.status; task = data.gm.task; label = 'EKİP LİDERLERİ';
+    members = data.leaders.map(l=>({ name:PEOPLE[l.id].name + ' — ' + PEOPLE[l.id].role, status:l.status, task:l.task }));
+  } else {
+    const l = data.leaders.find(x=>x.id===id);
+    st = l.status; task = l.task; label = 'ALT AJANLAR';
+    members = l.teams;
+  }
+
+  const rows = members.length
+    ? members.map(m=>`
+        <div class="member ${m.status}">
+          <div class="mname">${m.status==='calisiyor' ? '<span class="spin"></span>' : ''}${m.name}</div>
+          <div class="mtask">${m.task||''}</div>
+          <div class="chip ${m.status}">${STATUS_TR[m.status]||m.status}</div>
+        </div>`).join('')
+    : '<div class="empty">Şu an aktif alt ajan yok</div>';
+
+  box.innerHTML = `
+    <div class="dhead">
+      <div class="avatar" style="background:${p.color}">${initials(p.name)}</div>
+      <div>
+        <div class="dtitle">${p.name}</div>
+        <div class="dsub">${p.role} · ${STATUS_TR[st]||st}</div>
+      </div>
+    </div>
+    ${task ? `<div class="dtask">Görev: ${task}</div>` : ''}
+    <div class="dlabel">${label}</div>
+    ${rows}`;
+  box.style.display = 'block';
+  box.className = 'open';
+}
+
+function drawWires(){
+  const svg = document.getElementById('wires');
+  const tree = document.getElementById('tree');
+  const tr = tree.getBoundingClientRect();
+  svg.setAttribute('width', tr.width);
+  svg.setAttribute('height', tr.height);
+  svg.innerHTML = '';
+  const gm = document.getElementById('card-gm').getBoundingClientRect();
+  const gx = gm.left - tr.left + gm.width/2;
+  const gy = gm.bottom - tr.top;
+  data.leaders.forEach(l=>{
+    const el = document.getElementById('card-' + l.id);
+    if (!el) return;
+    const b = el.getBoundingClientRect();
+    const x = b.left - tr.left + b.width/2;
+    const y = b.top - tr.top;
+    const busY = gy + (y - gy)/2;
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d', `M ${gx} ${gy} L ${gx} ${busY} L ${x} ${busY} L ${x} ${y}`);
+    path.setAttribute('class', 'wire' + (l.status==='calisiyor' ? ' active' : ''));
+    svg.appendChild(path);
+  });
+}
+
+window.addEventListener('resize', drawWires);
+
+/* REALTIME: data.json'u periyodik çek (GitHub Pages, cache-buster ile) */
+async function poll(){
+  try{
+    const res = await fetch('data.json?t=' + Date.now(), { cache:'no-store' });
+    if (res.ok){
+      const nd = await res.json();
+      if (JSON.stringify(nd) !== JSON.stringify(data)){ data = nd; render(); }
+    }
+  }catch(e){
+    if (!data) document.getElementById('updated').textContent = 'çevrimdışı';
+  }
+}
+poll();
+setInterval(poll, REFRESH_SEC * 1000);
 </script>
 </body>
 </html>
